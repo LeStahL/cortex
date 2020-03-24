@@ -97,7 +97,7 @@ Window::Window(const char* _title)
 	SendMessage(resolutionDropdownHandle, CB_SETCURSEL, defaultIndex, 0);
     
     // Add mute checkbox
-    muteCheckboxHandle = CreateWindow(WC_BUTTON, "Mute demo", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 100,40,175,15, handle, (HMENU) MUTE_CHECKBOX, instance, NULL);
+    muteCheckboxHandle = CreateWindow(WC_BUTTON, "Mute demo", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 10,40,265,15, handle, (HMENU) MUTE_CHECKBOX, instance, NULL);
     
     // Add SFX buffer size selector
     sfxBufferSizeLabelHandle = CreateWindow(WC_STATIC, "SFX buffer: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 64, 80, 15, handle, NULL, instance, NULL);
@@ -113,7 +113,38 @@ Window::Window(const char* _title)
         size *= 2;
     }
 	SendMessage(sfxBufferSizeDropdownHandle, CB_SETCURSEL, 2, 0);
+    
+    // Add sample rate selector
+    sfxSampleRateLabelHandle = CreateWindow(WC_STATIC, "SFX rate: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 94, 80, 15, handle, NULL, instance, NULL);
+    
+    sfxSampleRateDropdownHandle = CreateWindow(WC_COMBOBOX, "", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 100, 92, 175, 60, handle, (HMENU)SFX_SAMPLERATE_COMBOBOX, instance, NULL);
+    
+    SendMessage(sfxSampleRateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "44.1 kHz");
+    SendMessage(sfxSampleRateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "48 kHz");
+	SendMessage(sfxSampleRateDropdownHandle, CB_SETCURSEL, 0, 0);
+    
+    // Add record checkbox
+    recordCheckboxHandle = CreateWindow(WC_BUTTON, "Record demo", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 10,122,265,15, handle, (HMENU) RECORD_CHECKBOX, instance, NULL);
+    
+    // Add record filename
+    recordOutputDirectoryLabelHandle = CreateWindow(WC_STATIC, "Output: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 146, 80, 15, handle, NULL, instance, NULL);
+    
+    recordOutputDirectoryTextboxHandle = CreateWindow(WC_EDIT, "recording", WS_VISIBLE | WS_CHILD | WS_BORDER, 100, 144, 175, 22, handle, (HMENU) RECORD_OUTPUT_FILENAME_EDIT, NULL, NULL);
+    
+    // Add record framerate selector
+    recordOutputFramerateLabelHandle = CreateWindow(WC_STATIC, "Framerate: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 174, 80, 15, handle, NULL, instance, NULL);
+    
+    recordOutputFramerateDropdownHandle = CreateWindow(WC_COMBOBOX, "", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 100, 172, 175, 60, handle, (HMENU)RECORD_FRAMERATE_COMBOBOX, instance, NULL);
 
+    SendMessage(recordOutputFramerateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "60 Fps");
+    SendMessage(recordOutputFramerateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "30 Fps");
+	SendMessage(recordOutputFramerateDropdownHandle, CB_SETCURSEL, 0, 0);
+    
+    // Team210 box
+    team210CreditLabel = CreateWindow(WC_STATIC, "|-Team210 - we are ::\n|-QM :: Code^SFX\n|-NR4 :: Code^GFX\n|-Atlas :: GFX\n|-MIC :: Ideas^GFX\n|-Grenzdevil :: Dir\n|-DaDummy :: Code", WS_VISIBLE | WS_CHILD | SS_LEFT | WS_BORDER, 10, 202, 150, 113, handle, NULL, instance, NULL);
+    
+    // Start button
+    startButtonHandle = CreateWindow(WC_BUTTON,"Offend!",WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,165,202,113,113,handle,(HMENU)START_BUTTON,instance,NULL);
     
     ShowWindow(handle, TRUE);
     UpdateWindow(handle);

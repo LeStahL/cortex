@@ -6,6 +6,11 @@
 #define RESOLUTION_COMBOBOX 0x1
 #define MUTE_CHECKBOX 0x2
 #define SFX_BUFFERSIZE_COMBOBOX 0x3
+#define RECORD_CHECKBOX 0x4
+#define SFX_SAMPLERATE_COMBOBOX 0x5
+#define RECORD_OUTPUT_FILENAME_EDIT 0x6
+#define RECORD_FRAMERATE_COMBOBOX 0x7
+#define START_BUTTON 0x8
 
 class Window
 {
@@ -33,6 +38,8 @@ public:
         muteCheckboxHandle,
         sfxBufferSizeLabelHandle,
         sfxBufferSizeDropdownHandle,
+        sfxSampleRateLabelHandle,
+        sfxSampleRateDropdownHandle,
         recordCheckboxHandle,
         recordOutputDirectoryLabelHandle,
         recordOutputDirectoryTextboxHandle,
