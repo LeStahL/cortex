@@ -82,7 +82,8 @@ Window::Window(const char* _title)
     
     handle = CreateWindowEx(0, title, title, WS_OVERLAPPEDWINDOW, 200, 200, 300, 360, NULL, NULL, instance, 0);
     
-    resolutionLabelHandle = CreateWindow(WC_STATIC, "Resolution: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 15, 100, 100, handle, NULL, instance, NULL);
+    // Add components to selector window
+    resolutionLabelHandle = CreateWindow(WC_STATIC, "Resolution: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 12, 80, 15, handle, NULL, instance, NULL);
     
     resolutionDropdownHandle = CreateWindow(WC_COMBOBOX, "", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 100, 10, 175, nUniqueResolutions*15, handle, (HMENU)RESOLUTION_COMBOBOX, instance, NULL);
     
@@ -94,6 +95,25 @@ Window::Window(const char* _title)
         SendMessage(resolutionDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) name);
     }
 	SendMessage(resolutionDropdownHandle, CB_SETCURSEL, defaultIndex, 0);
+    
+    // Add mute checkbox
+    muteCheckboxHandle = CreateWindow(WC_BUTTON, "Mute demo", WS_VISIBLE | WS_CHILD | BS_CHECKBOX, 100,40,175,15, handle, (HMENU) MUTE_CHECKBOX, instance, NULL);
+    
+    // Add SFX buffer size selector
+    sfxBufferSizeLabelHandle = CreateWindow(WC_STATIC, "SFX buffer: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 64, 80, 15, handle, NULL, instance, NULL);
+    
+    sfxBufferSizeDropdownHandle = CreateWindow(WC_COMBOBOX, "", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 100, 62, 175, nUniqueResolutions*15, handle, (HMENU)SFX_BUFFERSIZE_COMBOBOX, instance, NULL);
+    
+    int size = 128;
+    for(int i=0; i<4; ++i)
+    {
+        char name[1024];
+        sprintf(name, "%d*%d px", size, size);
+        SendMessage(sfxBufferSizeDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) name);
+        size *= 2;
+    }
+	SendMessage(sfxBufferSizeDropdownHandle, CB_SETCURSEL, 2, 0);
+
     
     ShowWindow(handle, TRUE);
     UpdateWindow(handle);

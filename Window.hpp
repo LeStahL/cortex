@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Windows.h"
-#	include <commctrl.h>
+#include <commctrl.h>
+
 #define RESOLUTION_COMBOBOX 0x1
+#define MUTE_CHECKBOX 0x2
+#define SFX_BUFFERSIZE_COMBOBOX 0x3
 
 class Window
 {
@@ -29,7 +32,7 @@ public:
         resolutionDropdownHandle,
         muteCheckboxHandle,
         sfxBufferSizeLabelHandle,
-        sfxBufferSizedropdownHandle,
+        sfxBufferSizeDropdownHandle,
         recordCheckboxHandle,
         recordOutputDirectoryLabelHandle,
         recordOutputDirectoryTextboxHandle,
