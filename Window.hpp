@@ -15,7 +15,7 @@
 class Window
 {
 public:
-    Window(const char *title = " :: Team210 - Go, make a demo :: ");
+    Window(HINSTANCE instance, const char *title = " :: Team210 - Go, make a demo :: ");
     ~Window();
     
     // Window related
@@ -26,6 +26,8 @@ public:
     HINSTANCE instance;
     
     // OpenGL related
+    int width,
+        height;
     
     // Selector related
     bool isSelector,
@@ -47,6 +49,6 @@ public:
         recordOutputFramerateDropdownHandle,
         startButtonHandle,
         team210CreditLabel;
+        
+    void showSelector();
 };
-
-static Window *windowInstance = nullptr;

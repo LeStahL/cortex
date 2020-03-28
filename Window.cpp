@@ -6,17 +6,36 @@
 
 LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    UINT id = LOWORD(wParam);
+    
     switch(uMsg)
 	{
+        case WM_COMMAND:
+            switch(id)
+            {
+                case START_BUTTON:
+                    // TODO: Start demo here
+                    break;
+            }
+            break;
+            
         case WM_CLOSE:
 			ExitProcess(0);
 			break;
+            
+        case WM_PAINT:
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
+            EndPaint(hwnd, &ps);
+            break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-Window::Window(const char* _title)
+Window::Window(HINSTANCE _instance, const char* _title)
     : title(_title)
+    , instance(_instance)
     , isSelector(true)
 {
     // Determine supported display device modes
@@ -128,13 +147,17 @@ Window::Window(const char* _title)
     
     // Add record filename
     recordOutputDirectoryLabelHandle = CreateWindow(WC_STATIC, "Output: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 146, 80, 15, handle, NULL, instance, NULL);
+    EnableWindow(recordOutputDirectoryLabelHandle, FALSE);
     
     recordOutputDirectoryTextboxHandle = CreateWindow(WC_EDIT, "recording", WS_VISIBLE | WS_CHILD | WS_BORDER, 100, 144, 175, 22, handle, (HMENU) RECORD_OUTPUT_FILENAME_EDIT, NULL, NULL);
+    EnableWindow(recordOutputDirectoryTextboxHandle, FALSE);
     
     // Add record framerate selector
     recordOutputFramerateLabelHandle = CreateWindow(WC_STATIC, "Framerate: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 174, 80, 15, handle, NULL, instance, NULL);
+    EnableWindow(recordOutputFramerateLabelHandle, FALSE);
     
     recordOutputFramerateDropdownHandle = CreateWindow(WC_COMBOBOX, "", CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 100, 172, 175, 60, handle, (HMENU)RECORD_FRAMERATE_COMBOBOX, instance, NULL);
+    EnableWindow(recordOutputFramerateDropdownHandle, FALSE);
 
     SendMessage(recordOutputFramerateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "60 Fps");
     SendMessage(recordOutputFramerateDropdownHandle, (UINT) CB_ADDSTRING, (WPARAM) 0, (LPARAM) "30 Fps");
@@ -148,10 +171,19 @@ Window::Window(const char* _title)
     
     ShowWindow(handle, TRUE);
     UpdateWindow(handle);
-    
-    windowInstance = this;
 }
 
 Window::~Window()
 {
 }
+
+void Window::showSelector()
+{
+    MSG msg = { 0 };
+	while(GetMessage(&msg, NULL, 0, 0) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
