@@ -1,0 +1,4 @@
+#pragma once
+
+${PLATFORM_DEFINITION}
+${BUILD_TYPE_DEFINITION}

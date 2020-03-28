@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Build.gen.hpp"
+#include "Configuration.hpp"
+
+#ifdef MSVC
 #include "Windows.h"
 #include <commctrl.h>
 
@@ -25,16 +29,14 @@ public:
     HDC deviceContext;
     HINSTANCE instance;
     
-    // OpenGL related
-    int width,
-        height;
-    
     // Selector related
     bool isSelector,
         recording;
     const char *outputDirectory;
     int nResolutions = 0,
-        nUniqueResolutions = 0;
+        nUniqueResolutions = 0,
+        *widths,
+        *heights;
     HWND resolutionLabelHandle,
         resolutionDropdownHandle,
         muteCheckboxHandle,
@@ -49,6 +51,11 @@ public:
         recordOutputFramerateDropdownHandle,
         startButtonHandle,
         team210CreditLabel;
+
+    Configuration configuration;
         
     void showSelector();
+    int flipBuffers();
 };
+static Window *demoWindow = 0;
+#endif // MSVC

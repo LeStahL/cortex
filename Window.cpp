@@ -3,7 +3,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <cmath>
 
+#ifdef MSVC
 LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     UINT id = LOWORD(wParam);
@@ -14,8 +16,30 @@ LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             switch(id)
             {
                 case START_BUTTON:
-                    // TODO: Start demo here
+                {
+                    demoWindow->isSelector = false;
                     break;
+                }   
+                case MUTE_CHECKBOX:
+                {
+                    int checked = SendMessage(demoWindow->muteCheckboxHandle, BM_GETCHECK, 0, 0);
+                    SendMessage(demoWindow->muteCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
+                    EnableWindow(demoWindow->sfxBufferSizeLabelHandle, checked);
+                    EnableWindow(demoWindow->sfxBufferSizeDropdownHandle, checked);
+                    EnableWindow(demoWindow->sfxSampleRateLabelHandle, checked);
+                    EnableWindow(demoWindow->sfxSampleRateDropdownHandle, checked);
+                    break;
+                }
+                case RECORD_CHECKBOX:
+                {
+                    int checked = SendMessage(demoWindow->recordCheckboxHandle, BM_GETCHECK, 0, 0);
+                    SendMessage(demoWindow->recordCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
+                    EnableWindow(demoWindow->recordOutputDirectoryLabelHandle, !checked);
+                    EnableWindow(demoWindow->recordOutputDirectoryTextboxHandle, !checked);
+                    EnableWindow(demoWindow->recordOutputFramerateLabelHandle, !checked);
+                    EnableWindow(demoWindow->recordOutputFramerateDropdownHandle, !checked);
+                    break;
+                }
             }
             break;
             
@@ -38,6 +62,8 @@ Window::Window(HINSTANCE _instance, const char* _title)
     , instance(_instance)
     , isSelector(true)
 {
+    demoWindow = this;
+    
     // Determine supported display device modes
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
@@ -46,10 +72,10 @@ Window::Window(HINSTANCE _instance, const char* _title)
     for(nResolutions = 0; EnumDisplaySettings(NULL, nResolutions, &dm) != 0; ++nResolutions);
     
     // Allocate arrays
-    int *widths = (int*) malloc(nResolutions * sizeof(int)),
-        *heights = (int*) malloc(nResolutions * sizeof(int)),
-        *rates = (int*)malloc(nResolutions * sizeof(int)),
-        defaultIndex = 0;
+    widths = (int*) malloc(nResolutions * sizeof(int));
+    heights = (int*) malloc(nResolutions * sizeof(int));
+    int *rates = (int*)malloc(nResolutions * sizeof(int));
+    int defaultIndex = 0;
     
     // Fill arrays
     for(int i = 0; i < nResolutions; ++i) 
@@ -171,19 +197,55 @@ Window::Window(HINSTANCE _instance, const char* _title)
     
     ShowWindow(handle, TRUE);
     UpdateWindow(handle);
+    
+    deviceContext = GetDC(handle);
 }
 
 Window::~Window()
 {
 }
 
-void Window::showSelector()
+int Window::flipBuffers()
 {
-    MSG msg = { 0 };
-	while(GetMessage(&msg, NULL, 0, 0) > 0)
+    SwapBuffers(deviceContext);
+
+	MSG msg = { 0 };
+	while ( PeekMessageA( &msg, NULL, 0, 0, PM_REMOVE ) )
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if ( msg.message == WM_QUIT ) {
+			return FALSE;
+		}
+		TranslateMessage( &msg );
+		DispatchMessageA( &msg );
 	}
+
+	return TRUE;
 }
 
+
+void Window::showSelector()
+{
+	while(isSelector) flipBuffers();
+    
+    int index;
+	
+    index = SendMessage(resolutionDropdownHandle, CB_GETCURSEL, 0, 0);
+    configuration.screenWidth = widths[index];
+    configuration.screenHeight = heights[index];
+    
+    index = SendMessage(sfxBufferSizeDropdownHandle, CB_GETCURSEL, 0, 0);
+    configuration.sfxBufferWidth = 128*pow(2,index);
+    
+    index = SendMessage(sfxSampleRateDropdownHandle, CB_GETCURSEL, 0, 0);
+    configuration.sfxSampleRate = index?48000:44100;
+    
+    index = SendMessage(recordOutputFramerateDropdownHandle, CB_GETCURSEL, 0, 0);
+    configuration.recordFps = index?30:60;
+    
+    configuration.muted = SendMessage(muteCheckboxHandle, BM_GETCHECK, 0, 0);
+    configuration.record = SendMessage(recordCheckboxHandle, BM_GETCHECK, 0, 0);
+    
+    GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);    
+}
+
+#endif // MSVC
