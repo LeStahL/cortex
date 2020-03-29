@@ -1,0 +1,94 @@
+{
+    "name":"Cortex",
+    "identifier":"cortex",
+    "group":"Team210",
+    "party":"Evoke",
+    "year":2020,
+    "description":[
+        "We proudly invite you to EVOKE 2020.",
+        "The party will happen at AHK.",
+        "TODO"
+    ],
+    "license":[
+        "Demo is (c) YEAR GROUP and licensed under GPLv3, see LICENSE",
+        "FindWindowsSDK.cmake is copyright (c) 2012 Iowa State University; author is Ryan Pavlik <rpavlik@iastate.edu> <abiryan@ryand.net>. It is distributed under the Boost Software License, Version 1.0; see thirdparty/FindWindowsSDK/LICENSE_1_0.txt"
+    ],
+    "authors":
+    [
+        {
+            "handle":"NR4",
+            "realname":"Alexander Kraus",
+            "email":"nr4@z10.info",
+            "credits":["code","gfx"]
+        },
+        {
+            "handle":"QM",
+            "realname":"Matthias Weinreuter",
+            "email":"qm@z10.info",
+            "credits":["code","sfx"]
+        },
+        {
+            "handle":"LeMique",
+            "realname":"",
+            "email":"mic@z10.info",
+            "credits":["gfx","direction","feedback"]
+        },
+        {
+            "handle":"grenzdevil",
+            "realname":"",
+            "email":"",
+            "credits":["direction"]
+        },
+        {
+            "handle":"DaDummy",
+            "realname":"Christopher Anselm",
+            "email":"c.anselm@paindevs.com",
+            "credits":["code"]
+        },
+        {
+            "handle":"Atlas",
+            "realname":"",
+            "email":"",
+            "credits":["gfx"]
+        }
+    ],
+    "length":187.061354,
+    "loading bar":"load.frag",
+    "precalc":
+    [
+        {
+            "TODO":"design"
+        }
+    ],
+    "scenes":
+    [
+        {
+            "name":"Logo 210",
+            "passes":
+            [
+                 {
+                    "pass name":"Main pass",
+                    "input textures":[],
+                    "input filtering":[],
+                    "output texture":0,
+                    "fragment":"logo210.frag"
+                 },
+                 {
+                    "pass name":"Post processing",
+                    "input textures":[0],
+                    "input filtering":["linear"],
+                    "output texture":0,
+                    "fragment":"post.frag"
+                 },
+                 {
+                    "pass name":"Text",
+                    "input textures":[0],
+                    "input filtering":["linear"],
+                    "output texture":-1,
+                    "fragment":"text.frag"
+                 }
+            ],
+            "start":0.0
+        }
+    ]
+}
