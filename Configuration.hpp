@@ -7,6 +7,7 @@ public:
     
     int screenWidth,
         screenHeight,
+        screenRate,
         sfxBufferWidth,
         sfxSampleRate,
         recordFps;

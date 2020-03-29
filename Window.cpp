@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "OpenGL.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -74,7 +75,7 @@ Window::Window(HINSTANCE _instance, const char* _title)
     // Allocate arrays
     widths = (int*) malloc(nResolutions * sizeof(int));
     heights = (int*) malloc(nResolutions * sizeof(int));
-    int *rates = (int*)malloc(nResolutions * sizeof(int));
+    rates = (int*)malloc(nResolutions * sizeof(int));
     int defaultIndex = 0;
     
     // Fill arrays
@@ -222,7 +223,6 @@ int Window::flipBuffers()
 	return TRUE;
 }
 
-
 void Window::showSelector()
 {
 	while(isSelector) flipBuffers();
@@ -232,6 +232,7 @@ void Window::showSelector()
     index = SendMessage(resolutionDropdownHandle, CB_GETCURSEL, 0, 0);
     configuration.screenWidth = widths[index];
     configuration.screenHeight = heights[index];
+    configuration.screenRate = rates[index];
     
     index = SendMessage(sfxBufferSizeDropdownHandle, CB_GETCURSEL, 0, 0);
     configuration.sfxBufferWidth = 128*pow(2,index);
@@ -246,6 +247,50 @@ void Window::showSelector()
     configuration.record = SendMessage(recordCheckboxHandle, BM_GETCHECK, 0, 0);
     
     GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);    
+}
+
+void Window::showDemo()
+{
+    DEVMODE dma = { 0 };
+    dma.dmSize = sizeof(DEVMODE);
+    dma.dmPelsWidth = configuration.screenWidth;
+    dma.dmPelsHeight = configuration.screenHeight;
+    dma.dmDisplayFrequency = configuration.screenRate;
+    dma.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
+    
+    ChangeDisplaySettings(&dma, CDS_FULLSCREEN);
+    
+    UpdateWindow(handle);
+    
+    PIXELFORMATDESCRIPTOR pfd =
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    //Flags
+		PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+		32,                   // Colordepth of the framebuffer.
+		0, 0, 0, 0, 0, 0,
+		0,
+		0,
+		0,
+		0, 0, 0, 0,
+		24,                   // Number of bits for the depthbuffer
+		8,                    // Number of bits for the stencilbuffer
+		0,                    // Number of Aux buffers in the framebuffer.
+		PFD_MAIN_PLANE,
+		0,
+		0, 0, 0
+	};
+
+	int  pf = ChoosePixelFormat(deviceContext, &pfd);
+	SetPixelFormat(deviceContext, pf, &pfd);
+
+	glrc = wglCreateContext(deviceContext);
+	wglMakeCurrent(deviceContext, glrc);
+
+    ShowCursor(FALSE);
+    
+    initializeOpenGLExtensions();
 }
 
 #endif // MSVC

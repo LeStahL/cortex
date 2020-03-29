@@ -24,10 +24,12 @@ public:
     
     // Window related
     const char *title;
-    HWND handle, 
-        *controlHandles;
+    HWND handle;
     HDC deviceContext;
     HINSTANCE instance;
+    
+    // OpenGL related
+    HGLRC glrc;
     
     // Selector related
     bool isSelector,
@@ -36,7 +38,8 @@ public:
     int nResolutions = 0,
         nUniqueResolutions = 0,
         *widths,
-        *heights;
+        *heights,
+        *rates;
     HWND resolutionLabelHandle,
         resolutionDropdownHandle,
         muteCheckboxHandle,
@@ -56,6 +59,7 @@ public:
         
     void showSelector();
     int flipBuffers();
+    void showDemo();
 };
 static Window *demoWindow = 0;
 #endif // MSVC

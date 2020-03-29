@@ -5,6 +5,7 @@ project(cortex)
 set(${PROJECT_NAME}_SOURCES
     main.cpp
     
+    OpenGL.cpp
     Configuration.cpp
     Window.cpp
 )
@@ -35,3 +36,7 @@ if(MSVC)
     target_link_libraries(${PROJECT_NAME} User32 Winmm ucrt msvcrt vcruntime Vfw32)
 endif()
 
+if(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    find_program(KKRUNCHY_K7 kkrunchy_k7.exe HINTS "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}/bin")
+    add_custom_command(TARGET ${PROJECT_NAME} COMMAND "$<$<CONFIG:RELEASE>:${KKRUNCHY_K7}>" ARGS --best "$<TARGET_FILE:${PROJECT_NAME}>" --out "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${PROJECT_NAME}c.exe" POST_BUILD)
+endif()
