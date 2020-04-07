@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse, json, os.path
+import GLSLLexer130, Compressor
 
 def authorJSON(authorName, demoJSON):
     for author in demoJSON['authors']:
@@ -23,7 +24,85 @@ def authorJSON(authorName, demoJSON):
     print("Requested author does not exist.")
     return 0
 
+def tokenIs(token, identifier):
+    if token != None:
+        if token.tokenName == identifier:
+            return True
+    return False
+
+def tokenIsDataType(token):
+    dataTypeTokenNames = [ "VOID", "FLOAT", "VEC2", "VEC3", "VEC4", "MAT2", "MAT3", "MAT4", "BVEC2", "BVEC3", "BVEC4", "UVEC2", "UVEC3", "UVEC4", "INT" ]
+    if token != None:
+        if token.tokenName in dataTypeTokenNames:
+            return True
+    return False
+
+def hasEntryPoint(source):
+    lexer = GLSLLexer130.GLSLLexer130(source)
+    token = lexer.token()
+    while token != None:
+        if tokenIs(token, "VOID"):
+            token = lexer.token()
+            if tokenIs(token, "MAIN"):
+                token = lexer.token()
+                if tokenIs(token, "LPAREN"):
+                    token = lexer.token()
+                    if tokenIs(token, "RPAREN"):
+                        return True
+        token = lexer.token()
+    return False
+
+def containedSymbolPrototypes(source):
+    lexer = GLSLLexer130.GLSLLexer130(source)
+    token = lexer.token()
+    symbolList = []
+    
+    while token != None:
+        if tokenIsDataType(token):
+            token = lexer.token()
+            if tokenIs(token, "IDENTIFIER"):
+                symbolIdentifier = token.tokenData
+                token = lexer.token()
+                if tokenIs(token, "LPAREN"):
+                    token = lexer.token()
+                    if tokenIs(token, "RPAREN"):
+                        token = lexer.token()
+                        if tokenIs(token, "SEMICOLON"):
+                            symbolList += [ symbolIdentifier ]
+                    else:
+                        # Ignore the now following argument list; it does not matter at all.
+                        while not tokenIs(token, "RPAREN"):
+                            token = lexer.token()
+                        token = lexer.token()
+                        if tokenIs(token, "SEMICOLON"):
+                            symbolList += [ symbolIdentifier ]
+        token = lexer.token()
+    return symbolList
+
+def tokenNeedsSpace(token):
+    tokenNamesWithSpace = [ "VOID", "FLOAT", "VEC2", "VEC3", "VEC4", "MAT2", "MAT3", "MAT4", "SAMPLER2D", "UNIFORM", "IN_QUALIFIER", "OUT_QUALIFIER", "INOUT_QUALIFIER", "VOID", "VERSION_DIRECTIVE", "DEFINE_DIRECTIVE", "CONST", "INT", "ELSE", "RETURN" ]
+    if token != None:
+        if token.tokenName in tokenNamesWithSpace:
+            return True
+    return False
+
+def compressSource(source):
+    lexer = GLSLLexer130.GLSLLexer130(source)
+    token = lexer.token()
+    smallerSource = ""
+    
+    while token != None:
+        if (not tokenIs(token, "SINGLELINE_COMMENT")) and (not tokenIs(token, "MULTILINE_COMMENT")):
+            smallerSource += token.tokenData
+            if tokenNeedsSpace(token):
+                smallerSource += ' '     
+        print(token.tokenName, token.tokenData)
+        token = lexer.token()
+    
+    return smallerSource
+
 parser = argparse.ArgumentParser(description='Team210 generator tool.')
+parser.add_argument('--debug', dest='debug', action='store_true')
 args, rest = parser.parse_known_args()
 
 if rest == []:
@@ -40,6 +119,27 @@ demoParty = demoJSON['party']
 partyYear = demoJSON['year']
 demoName = demoJSON['name']
 demoLength = demoJSON['length']
+
+# Scan for shader files needed for loading bar
+loadingBarFilename = demoJSON['loading bar']
+f = open('symbols/' + loadingBarFilename, "rt")
+loadingBarShaderSource = f.read()
+f.close()
+loadingBarSymbols = containedSymbolPrototypes(loadingBarShaderSource)
+f = open("LoadingBar.gen.cpp", "wt")
+f.write("#include \"LoadingBar.hpp\"\n")
+f.write("\n")
+f.write("void LoadingBar::compileSymbolsForSelf()\n")
+f.write("{\n")
+for symbol in loadingBarSymbols:
+    g = open("symbols\\" + symbol + ".frag", "rt")
+    symbolSource = g.read()
+    g.close()
+    compressedSymbolSource = compressSource(symbolSource)
+    print(compressedSymbolSource)
+    #f.write("\tsymbolTable->addSymbol(new Shader(" + compressedSymbolSource + "
+#f.write("\tsymbolTable->addSymbol(
+f.close()
 
 # Scan for all shader files
 #shaderFiles = []

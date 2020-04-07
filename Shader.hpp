@@ -8,7 +8,10 @@
 class Shader
 {
 public:
-    Shader(const char *source);
+    Shader(const char *source, const char *symbol);
+    
+    void compile();
+    bool isCompiled;
     
     GLuint handle;
 #ifdef DEBUG

@@ -5,9 +5,14 @@
     "party":"Evoke",
     "year":2020,
     "description":[
-        "We proudly invite you to EVOKE 2020.",
-        "The party will happen at AHK.",
-        "TODO"
+        "We proudly present this quality release",
+        "We will have you know that we ordered",
+        "200 liters of Kilkenny and Guiness to",
+        "survive this SARS-COV2 madness and",
+        "we will gladly take this chance to improve",
+        "our engine and its awesome powers",
+        "and bring to you another FUCKING DEMO!",
+        "Cheers to you!"
     ],
     "license":[
         "Demo is (c) YEAR GROUP and licensed under GPLv3, see LICENSE",
@@ -57,7 +62,7 @@
     "precalc":
     [
         {
-            "TODO":"design"
+            "name":"TODO: Precalc design"
         }
     ],
     "scenes":

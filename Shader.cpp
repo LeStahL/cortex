@@ -2,10 +2,10 @@
 #include "OpenGL.hpp"
 
 Shader::Shader(const char* source)
+    : isCompiled(false)
 {
     handle = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(handle, 1, (const GLchar**)&source, NULL);
-    glCompileShader(handle);
 }
 
 #ifdef DEBUG
@@ -25,3 +25,12 @@ char *Shader::compileError()
     return infoLog;
 }
 #endif // DEBUG
+
+void Shader::compile()
+{
+    glCompileShader(handle);
+#ifdef DEBUG
+    if(!hasCompileError())
+#endif
+    isCompiled = true;
+}
