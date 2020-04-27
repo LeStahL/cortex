@@ -64,9 +64,12 @@ public:
     Configuration configuration;
     LoadingBar *loadingBar;
     Demo *demo;
-        
+    
+    void initializeOpengl();
     void showSelector();
-    void showDemoWindow(LoadingBar *loadingBar);
+    void showLoadingBar(LoadingBar *loadingBar);
+    void showDemo(Demo *demo);
     int flipBuffers();
+    void quad();
 };
 #endif // MSVC

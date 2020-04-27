@@ -4,15 +4,13 @@ const char *loadingBarSource =
 "#version 130"
 "\n"
 "uniform vec2 iResolution;"
-"uniform float iTime;"
+"uniform float iProgress;"
 ""
 "out vec4 gl_FragColor;"
 ""
 "const float pi=acos(-1.);"
 "const vec3 c=vec3 (1.,0.,-1.);"
 "const float ssize=.6;"
-""
-"float iProgress;"
 ""
 "void rand(in vec2 x,out float n);"
 "void lfnoise(in vec2 t,out float n);"
@@ -138,8 +136,6 @@ const char *loadingBarSource =
 "vec2 uv=(fragCoord-.5*iResolution.xy)/iResolution.y,"
 "s,ss,"
 "s0;"
-""
-"iProgress=.5+.5*sin(iTime);"
 ""
 "vec3 col=c.yyy,"
 "o=c.yzx,"
@@ -267,6 +263,8 @@ const char *lfnoiseSource =
 "}"
 ;
 const char *smoothminSource =
+"#version 130"
+"\n"
 "void smoothmin(in float a,in float b,in float k,out float dst)"
 "{"
 "float h=max(k-abs(a-b),0.0)/k;"
@@ -364,21 +362,21 @@ LoadingBar::LoadingBar(SymbolTable *_symbolTable)
     : symbolTable(_symbolTable)
     , ownShader(new Shader(loadingBarSource))
 {
-    Shader *randShader = new Shader(randSource);
+    Shader *randShader = new Shader(randSource, "rand");
     symbolTable->addSymbol(randShader);
-    Shader *lfnoiseShader = new Shader(lfnoiseSource);
+    Shader *lfnoiseShader = new Shader(lfnoiseSource, "lfnoise");
     symbolTable->addSymbol(lfnoiseShader);
-    Shader *smoothminShader = new Shader(smoothminSource);
+    Shader *smoothminShader = new Shader(smoothminSource, "smoothmin");
     symbolTable->addSymbol(smoothminShader);
-    Shader *dsmoothvoronoiShader = new Shader(dsmoothvoronoiSource);
+    Shader *dsmoothvoronoiShader = new Shader(dsmoothvoronoiSource, "dsmoothvoronoi");
     symbolTable->addSymbol(dsmoothvoronoiShader);
-    Shader *dbox3Shader = new Shader(dbox3Source);
+    Shader *dbox3Shader = new Shader(dbox3Source, "dbox3");
     symbolTable->addSymbol(dbox3Shader);
-    Shader *zextrudeShader = new Shader(zextrudeSource);
+    Shader *zextrudeShader = new Shader(zextrudeSource, "zextrude");
     symbolTable->addSymbol(zextrudeShader);
-    Shader *addShader = new Shader(addSource);
+    Shader *addShader = new Shader(addSource, "add");
     symbolTable->addSymbol(addShader);
-    Shader *smShader = new Shader(smSource);
+    Shader *smShader = new Shader(smSource, "sm");
     symbolTable->addSymbol(smShader);
     symbolTable->compileContainedSymbols();
     ownProgram = new Program();
@@ -392,4 +390,7 @@ LoadingBar::LoadingBar(SymbolTable *_symbolTable)
     ownProgram->attachShader(addShader);
     ownProgram->attachShader(smShader);
     ownProgram->link();
+    ownProgram->use();
+    ownProgram->handleUniform("iResolution");
+    ownProgram->handleUniform("iProgress");
 }

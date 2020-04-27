@@ -9,7 +9,12 @@ Shader::Shader(const char* _source, const char *_symbol)
 {
     handle = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(handle, 1, (const GLchar**)&_source, NULL);
-    sprintf(symbol, "%s", _symbol);
+    
+    if(_symbol != nullptr)
+    {
+        symbol = (char *) malloc(strlen(_symbol) + 3);
+        sprintf(symbol, "%s", _symbol);
+    }
 }
 
 #ifdef DEBUG

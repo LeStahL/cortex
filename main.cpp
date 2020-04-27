@@ -1,6 +1,7 @@
 #include "Build.gen.hpp"
 #include "Window.hpp"
 #include "LoadingBar.hpp"
+#include "OpenGL.hpp"
 
 #include <cstdio>
 
@@ -16,9 +17,12 @@ int WINAPI demo(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, in
     
     Window win(hInstance, "Test demo.");
     win.showSelector();
+	win.initializeOpengl();
 
 	SymbolTable *symbolTable = new SymbolTable();
-	win.showDemoWindow(new LoadingBar(symbolTable));
+	LoadingBar *loadingBar = new LoadingBar(symbolTable);
+	// Demo *demo = new Demo(loadingBar);
+	win.showLoadingBar(loadingBar);
 
 	return 0;
 }

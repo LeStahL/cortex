@@ -1,15 +1,13 @@
 #version 130
 
 uniform vec2 iResolution;
-uniform float iTime;
+uniform float iProgress;
 
 out vec4 gl_FragColor;
 
 const float pi = acos(-1.);
 const vec3 c = vec3(1.,0.,-1.);
 const float ssize = .6;
-
-float iProgress;
 
 void rand(in vec2 x, out float n);
 void lfnoise(in vec2 t, out float n);
@@ -148,8 +146,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y,
         s, ss,
         s0;
-    
-    iProgress = .5+.5*sin(iTime);
     
     vec3 col = c.yyy,
         o = c.yzx,

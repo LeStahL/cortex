@@ -1,5 +1,33 @@
 #include "OpenGL.hpp"
 
+#include <cstdio>
+
+#ifdef DEBUG
+PFNGLGETSHADERIVPROC glGetShaderiv;
+PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+PFNGLGETPROGRAMIVPROC glGetProgramiv;
+PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+#endif // DEBUG
+
+PFNGLCREATESHADERPROC glCreateShader;
+PFNGLCREATEPROGRAMPROC glCreateProgram;
+PFNGLSHADERSOURCEPROC glShaderSource;
+PFNGLCOMPILESHADERPROC glCompileShader;
+PFNGLATTACHSHADERPROC glAttachShader;
+PFNGLLINKPROGRAMPROC glLinkProgram;
+PFNGLUSEPROGRAMPROC glUseProgram;
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+PFNGLUNIFORM2FPROC glUniform2f;
+PFNGLUNIFORM1FPROC glUniform1f;
+PFNGLUNIFORM1IPROC glUniform1i;
+PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
+PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
+PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
+PFNGLNAMEDRENDERBUFFERSTORAGEEXTPROC glNamedRenderbufferStorageEXT;
+#ifdef MSVC
+PFNGLACTIVETEXTUREPROC glActiveTexture;
+#endif // MSVC
+
 void initializeOpenGLExtensions()
 {
 #ifdef MSVC
@@ -27,15 +55,4 @@ void initializeOpenGLExtensions()
     glNamedRenderbufferStorageEXT = (PFNGLNAMEDRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress("glNamedRenderbufferStorage");
     glActiveTexture = (PFNGLACTIVETEXTUREPROC) wglGetProcAddress("glActiveTexture");
 #endif // MSVC
-}
-
-void quad()
-{
-    glBegin(GL_QUADS);
-    glVertex3f(-1,-1,0);
-    glVertex3f(-1,1,0);
-    glVertex3f(1,1,0);
-    glVertex3f(1,-1,0);
-    glEnd();
-    glFlush();
 }

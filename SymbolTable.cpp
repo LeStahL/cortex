@@ -1,12 +1,12 @@
 #include "SymbolTable.hpp"
 
 #include <cstring>
+#include <cstdio>
 
 SymbolTable::SymbolTable()
     : shaders(nullptr)
     , nShaders(0)
 {
-    symbolTable = this;
 }
 
 bool SymbolTable::hasSymbol(const char* symbol)
@@ -18,6 +18,8 @@ bool SymbolTable::hasSymbol(const char* symbol)
 
 void SymbolTable::addSymbol(Shader* shader)
 {
+    if(!shader->isSymbol) return;
+    
     if(!hasSymbol(shader->symbol))
     {
         ++nShaders;

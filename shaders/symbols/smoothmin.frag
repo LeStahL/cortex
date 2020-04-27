@@ -1,3 +1,5 @@
+#version 130
+
 // iq's smooth minimum
 void smoothmin(in float a, in float b, in float k, out float dst)
 {

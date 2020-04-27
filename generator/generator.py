@@ -162,7 +162,7 @@ f.write("    : symbolTable(_symbolTable)\n")
 f.write("    , ownShader(new Shader(loadingBarSource))\n")
 f.write("{\n")
 for symbol in loadingBarSymbols:
-    f.write("    Shader *" + symbol + "Shader = new Shader(" + symbol + "Source);\n")
+    f.write("    Shader *" + symbol + "Shader = new Shader(" + symbol + "Source, \"" + symbol + "\");\n")
     f.write("    symbolTable->addSymbol(" + symbol + "Shader);\n")
 f.write("    symbolTable->compileContainedSymbols();\n")
 f.write("    ownProgram = new Program();\n")
@@ -170,6 +170,9 @@ f.write("    ownProgram->attachShader(ownShader);\n")
 for symbol in loadingBarSymbols:
     f.write("    ownProgram->attachShader(" + symbol + "Shader);\n")
 f.write("    ownProgram->link();\n")
+f.write("    ownProgram->use();\n")
+f.write("    ownProgram->handleUniform(\"iResolution\");\n")
+f.write("    ownProgram->handleUniform(\"iProgress\");\n")
 f.write("}\n")
 f.close()
 

@@ -91,10 +91,13 @@ LRESULT CALLBACK Window::callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			break;
             
         case WM_PAINT:
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
-            EndPaint(hwnd, &ps);
+            if(isSelector)
+            {
+                PAINTSTRUCT ps;
+                HDC hdc = BeginPaint(hwnd, &ps);
+                FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
+                EndPaint(hwnd, &ps);
+            }
             break;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -239,8 +242,6 @@ Window::Window(HINSTANCE _instance, const char* _title)
     
     ShowWindow(handle, TRUE);
     UpdateWindow(handle);
-    
-    deviceContext = GetDC(handle);
 }
 
 Window::~Window()
@@ -290,9 +291,14 @@ void Window::showSelector()
     GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);    
 }
 
-void Window::showDemoWindow(LoadingBar *_loadingBar)
+void Window::initializeOpengl()
 {
-    loadingBar = _loadingBar;
+    LONG lStyle = GetWindowLong(handle, GWL_STYLE);
+    lStyle &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+    SetWindowLong(handle, GWL_STYLE, lStyle);
+
+    SetWindowPos(handle, HWND_TOP, 0, 0, configuration.screenWidth, configuration.screenHeight, SWP_SHOWWINDOW);
+    UpdateWindow(handle);
 
     DEVMODE dma = { 0 };
     dma.dmSize = sizeof(DEVMODE);
@@ -303,6 +309,7 @@ void Window::showDemoWindow(LoadingBar *_loadingBar)
     
     ChangeDisplaySettings(&dma, CDS_FULLSCREEN);
     
+    ShowWindow(handle, TRUE);
     UpdateWindow(handle);
     
     PIXELFORMATDESCRIPTOR pfd =
@@ -325,6 +332,8 @@ void Window::showDemoWindow(LoadingBar *_loadingBar)
 		0, 0, 0
 	};
 
+    deviceContext = GetDC(handle);
+
 	int  pf = ChoosePixelFormat(deviceContext, &pfd);
 	SetPixelFormat(deviceContext, pf, &pfd);
 
@@ -334,8 +343,46 @@ void Window::showDemoWindow(LoadingBar *_loadingBar)
     ShowCursor(FALSE);
     
     initializeOpenGLExtensions();
+}
 
-    while(isRunning) flipBuffers();
+void Window::showLoadingBar(LoadingBar *_loadingBar)
+{
+    loadingBar = _loadingBar;
+
+    // TODO: track loading bar status here
+    while(flipBuffers())
+    {
+    //     printf("draw()\n");
+    //     // Draw loading bar here until finished loading
+        glClearColor(1.,0.,0.,1.);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        loadingBar->ownProgram->use();
+        loadingBar->ownProgram->uniform2f("iResolution", configuration.screenWidth, configuration.screenHeight);
+        loadingBar->ownProgram->uniform1f("iProgress", .5);
+        quad();
+    }
+}
+
+void Window::showDemo(Demo *_demo)
+{
+    demo = _demo;
+
+    while(flipBuffers())
+    {
+        // Draw demo here
+    }
+}
+
+void Window::quad()
+{
+    glBegin(GL_QUADS);
+    glVertex3f(-1,-1,0);
+    glVertex3f(-1,1,0);
+    glVertex3f(1,1,0);
+    glVertex3f(1,-1,0);
+    glEnd();
+    glFlush();
 }
 
 #endif // MSVC

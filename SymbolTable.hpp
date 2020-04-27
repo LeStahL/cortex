@@ -15,4 +15,4 @@ public:
     
     Shader **shaders;
     int nShaders;
-} *symbolTable = nullptr;
+};
