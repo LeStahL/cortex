@@ -18,5 +18,5 @@ void rshort(in float off, out float val)
     // Convert bytes to unsigned short. The lower bytes operate on 255,
     // the higher bytes operate on 65280, which is the maximum range 
     // of 65535 minus the lower 255.
-    val = dot(vec2(255., 65280.), data);
+    val = round(dot(vec2(255., 65280.), data));
 }

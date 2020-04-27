@@ -8,7 +8,8 @@ const vec3 c = vec3(1.,0.,-1.);
 void lfnoise(in vec2 t, out float n);
 void smoothmin(in float a, in float b, in float k, out float dst);
 void rand(in vec2 x, out float d);
-void dsmoothvoronoi(in vec2 x, out float d, out vec2 z)
+
+void dsmoothvoronoi(in vec2 x, in float sm, out float d, out vec2 z)
 {
     float n;
 //     lfnoise(x-iTime*c.xy, n);
@@ -44,7 +45,7 @@ void dsmoothvoronoi(in vec2 x, out float d, out vec2 z)
             
             vec2 o = p - pf;
             d = length(.5*o-dot(x-pf, o)/dot(o,o)*o);
-            smoothmin(ret, d, .05, ret);
+            smoothmin(ret, d, sm, ret);
         }
     
     d = ret;

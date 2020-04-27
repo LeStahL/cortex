@@ -32,6 +32,7 @@ set(${DEMO_IDENTIFIER}_SOURCES
     Configuration.cpp
     Window.cpp
     Shader.cpp
+    SymbolTable.cpp
 )
 
 add_executable(${DEMO_IDENTIFIER} ${${DEMO_IDENTIFIER}_SOURCES})

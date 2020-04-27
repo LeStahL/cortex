@@ -122,7 +122,7 @@ demoLength = demoJSON['length']
 
 # Scan for shader files needed for loading bar
 loadingBarFilename = demoJSON['loading bar']
-f = open('symbols/' + loadingBarFilename, "rt")
+f = open('shaders/gfx/' + loadingBarFilename, "rt")
 loadingBarShaderSource = f.read()
 f.close()
 loadingBarSymbols = containedSymbolPrototypes(loadingBarShaderSource)
@@ -132,7 +132,7 @@ f.write("\n")
 f.write("void LoadingBar::compileSymbolsForSelf()\n")
 f.write("{\n")
 for symbol in loadingBarSymbols:
-    g = open("symbols\\" + symbol + ".frag", "rt")
+    g = open("shaders/symbols/" + symbol + ".frag", "rt")
     symbolSource = g.read()
     g.close()
     compressedSymbolSource = compressSource(symbolSource)

@@ -14,6 +14,7 @@ public:
     bool isCompiled;
     
     GLuint handle;
+    char *symbol;
 #ifdef DEBUG
     bool hasCompileError();
     char *compileError();

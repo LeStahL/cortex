@@ -8,9 +8,11 @@ static class SymbolTable
 public:
     SymbolTable();
     
+    bool hasSymbol(const char *symbol);
     void addSymbol(Shader *shader);
     void compileContainedSymbols();
+    int nCompiledShaders();
     
-    Shader *symbols;
-    int nSymbols;
+    Shader **shaders;
+    int nShaders;
 } *symbolTable = nullptr;

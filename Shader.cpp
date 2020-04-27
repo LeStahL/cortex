@@ -1,17 +1,21 @@
 #include "Shader.hpp"
 #include "OpenGL.hpp"
 
-Shader::Shader(const char* source)
+#include <cstdio>
+
+Shader::Shader(const char* _source, const char *_symbol)
     : isCompiled(false)
 {
     handle = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(handle, 1, (const GLchar**)&source, NULL);
+    glShaderSource(handle, 1, (const GLchar**)&_source, NULL);
+    sprintf(symbol, "%s", _symbol);
 }
 
 #ifdef DEBUG
 bool Shader::hasCompileError()
 {
     GLint compileStatus;
+
     glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
     return compileStatus == GL_TRUE;
 }
