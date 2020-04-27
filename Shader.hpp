@@ -8,13 +8,15 @@
 class Shader
 {
 public:
-    Shader(const char *source, const char *symbol);
+    Shader(const char *source, const char *symbol = nullptr);
     
     void compile();
     bool isCompiled;
+    bool isSymbol;
     
     GLuint handle;
     char *symbol;
+
 #ifdef DEBUG
     bool hasCompileError();
     char *compileError();

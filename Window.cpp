@@ -59,7 +59,33 @@ LRESULT CALLBACK Window::callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 }
             }
             break;
-            
+        case WM_KEYDOWN:
+			switch(wParam)
+			{
+				case VK_ESCAPE:
+					ExitProcess(0);
+					break;
+
+				case VK_SPACE:
+					// pause/unpaused render timer
+					// paused = !paused;
+					// if(paused)
+					// 	waveOutPause(hWaveOut);
+					// else
+					// 	waveOutRestart(hWaveOut);
+					break;
+// #ifdef DEBUG
+//                 case VK_RETURN:
+//                     showDebugWindow = !showDebugWindow;
+//                     break;
+// #endif
+			}
+			break;
+		
+        case WM_RBUTTONDOWN: // Breakpoint / UNC ruleset
+			ExitProcess(0);
+			break;
+
         case WM_CLOSE:
 			ExitProcess(0);
 			break;
@@ -78,6 +104,7 @@ Window::Window(HINSTANCE _instance, const char* _title)
     : title(_title)
     , instance(_instance)
     , isSelector(true)
+    , isRunning(true)
 {
     // Determine supported display device modes
     DEVMODE dm = { 0 };
@@ -263,8 +290,10 @@ void Window::showSelector()
     GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);    
 }
 
-void Window::showDemo()
+void Window::showDemoWindow(LoadingBar *_loadingBar)
 {
+    loadingBar = _loadingBar;
+
     DEVMODE dma = { 0 };
     dma.dmSize = sizeof(DEVMODE);
     dma.dmPelsWidth = configuration.screenWidth;
@@ -305,6 +334,8 @@ void Window::showDemo()
     ShowCursor(FALSE);
     
     initializeOpenGLExtensions();
+
+    while(isRunning) flipBuffers();
 }
 
 #endif // MSVC

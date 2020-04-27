@@ -3,18 +3,19 @@
 #include <Windows.h>
 #include "gl/GL.h"
 
-#include "Build.gen.h"
+#include "Build.gen.hpp"
+#include "Shader.hpp"
 
 class Program
 {
 public:
-    Program(Shader *shaders = 0);
+    Program();
     
     void attachShader(Shader *shader);
     void link();
     
     GLuint handle;
-    Shader *shaders;
+    Shader **shaders;
     int nShaders;
 #ifdef DEBUG
     bool hasLinkError();

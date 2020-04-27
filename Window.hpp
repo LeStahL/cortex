@@ -2,6 +2,8 @@
 
 #include "Build.gen.hpp"
 #include "Configuration.hpp"
+#include "Demo.hpp"
+#include "LoadingBar.hpp"
 
 #ifdef MSVC
 #include "Windows.h"
@@ -57,10 +59,14 @@ public:
         startButtonHandle,
         team210CreditLabel;
 
+    // Demo related
+    bool isRunning;
     Configuration configuration;
+    LoadingBar *loadingBar;
+    Demo *demo;
         
     void showSelector();
+    void showDemoWindow(LoadingBar *loadingBar);
     int flipBuffers();
-    void showDemo();
 };
 #endif // MSVC

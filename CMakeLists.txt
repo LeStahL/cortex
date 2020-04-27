@@ -33,6 +33,9 @@ set(${DEMO_IDENTIFIER}_SOURCES
     Window.cpp
     Shader.cpp
     SymbolTable.cpp
+    LoadingBar.cpp
+    LoadingBar.gen.cpp
+    Program.cpp
 )
 
 add_executable(${DEMO_IDENTIFIER} ${${DEMO_IDENTIFIER}_SOURCES})
@@ -40,7 +43,7 @@ target_link_libraries(${DEMO_IDENTIFIER} OpenGL::GL)
 
 if(MSVC)
     set_target_properties(${DEMO_IDENTIFIER} PROPERTIES LINK_FLAGS "/ENTRY:demo /SUBSYSTEM:Windows /OPT:REF /OPT:ICF=10 /VERBOSE /NODEFAULTLIB")
-    target_compile_options(${DEMO_IDENTIFIER} PRIVATE /Gy /O1 /fp:fast /GR- /GS- /MT /d2FH4)
+    target_compile_options(${DEMO_IDENTIFIER} PRIVATE /Gy /Os /fp:fast /GR- /GS- /MT /d2FH4 /RTC0)
     target_link_libraries(${DEMO_IDENTIFIER} User32 Winmm ucrt msvcrt vcruntime Vfw32)
 endif()
 

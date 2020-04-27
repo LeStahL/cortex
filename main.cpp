@@ -1,5 +1,6 @@
 #include "Build.gen.hpp"
 #include "Window.hpp"
+#include "LoadingBar.hpp"
 
 #include <cstdio>
 
@@ -15,7 +16,10 @@ int WINAPI demo(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, in
     
     Window win(hInstance, "Test demo.");
     win.showSelector();
-	
+
+	SymbolTable *symbolTable = new SymbolTable();
+	win.showDemoWindow(new LoadingBar(symbolTable));
+
 	return 0;
 }
 #endif // MSVC

@@ -5,6 +5,7 @@
 
 Shader::Shader(const char* _source, const char *_symbol)
     : isCompiled(false)
+    , isSymbol(_symbol != nullptr)
 {
     handle = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(handle, 1, (const GLchar**)&_source, NULL);

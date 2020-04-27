@@ -86,20 +86,40 @@ def tokenNeedsSpace(token):
             return True
     return False
 
+def tokenIsPreprocessorDirective(token):
+    preprocessorTokenNames = [ "VERSION_DIRECTIVE", "DEFINE_DIRECTIVE" ]
+    if token != None:
+        if token.tokenName in preprocessorTokenNames:
+            return True
+    return False
+
 def compressSource(source):
     lexer = GLSLLexer130.GLSLLexer130(source)
     token = lexer.token()
     smallerSource = ""
+    lineHasPreprocessorDirective = False
     
     while token != None:
         if (not tokenIs(token, "SINGLELINE_COMMENT")) and (not tokenIs(token, "MULTILINE_COMMENT")):
             smallerSource += token.tokenData
             if tokenNeedsSpace(token):
-                smallerSource += ' '     
-        print(token.tokenName, token.tokenData)
+                smallerSource += ' '
+        if tokenIs(token, "CRLF"):
+            if lineHasPreprocessorDirective:
+                smallerSource += "\\n"
+            lineHasPreprocessorDirective = False
+        if tokenIsPreprocessorDirective(token):
+            lineHasPreprocessorDirective = True
         token = lexer.token()
     
     return smallerSource
+
+def sourceVariable(name, source):
+    ret = "const char *" + name + " =\n"
+    for line in source.split('\n'):
+        ret += "\"" + line + "\"\n"
+    ret += ";\n"
+    return ret
 
 parser = argparse.ArgumentParser(description='Team210 generator tool.')
 parser.add_argument('--debug', dest='debug', action='store_true')
@@ -129,16 +149,28 @@ loadingBarSymbols = containedSymbolPrototypes(loadingBarShaderSource)
 f = open("LoadingBar.gen.cpp", "wt")
 f.write("#include \"LoadingBar.hpp\"\n")
 f.write("\n")
-f.write("void LoadingBar::compileSymbolsForSelf()\n")
-f.write("{\n")
+f.write(sourceVariable("loadingBarSource", compressSource(loadingBarShaderSource)))
 for symbol in loadingBarSymbols:
     g = open("shaders/symbols/" + symbol + ".frag", "rt")
     symbolSource = g.read()
     g.close()
     compressedSymbolSource = compressSource(symbolSource)
-    print(compressedSymbolSource)
-    #f.write("\tsymbolTable->addSymbol(new Shader(" + compressedSymbolSource + "
-#f.write("\tsymbolTable->addSymbol(
+    f.write(sourceVariable(symbol + "Source", compressedSymbolSource))
+f.write("\n")
+f.write("LoadingBar::LoadingBar(SymbolTable *_symbolTable)\n")
+f.write("    : symbolTable(_symbolTable)\n")
+f.write("    , ownShader(new Shader(loadingBarSource))\n")
+f.write("{\n")
+for symbol in loadingBarSymbols:
+    f.write("    Shader *" + symbol + "Shader = new Shader(" + symbol + "Source);\n")
+    f.write("    symbolTable->addSymbol(" + symbol + "Shader);\n")
+f.write("    symbolTable->compileContainedSymbols();\n")
+f.write("    ownProgram = new Program();\n")
+f.write("    ownProgram->attachShader(ownShader);\n")
+for symbol in loadingBarSymbols:
+    f.write("    ownProgram->attachShader(" + symbol + "Shader);\n")
+f.write("    ownProgram->link();\n")
+f.write("}\n")
 f.close()
 
 # Scan for all shader files
