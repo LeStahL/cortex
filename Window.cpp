@@ -7,10 +7,26 @@
 #include <cmath>
 
 #ifdef MSVC
-LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK static_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     UINT id = LOWORD(wParam);
     
+    if(uMsg == WM_NCCREATE)
+    {
+        LPVOID thisPointer = ((CREATESTRUCT *)lParam)->lpCreateParams;
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG) thisPointer);
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    }
+    else
+    {
+        Window *demoWindow = (Window *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
+        return demoWindow->callback(hwnd, uMsg, wParam, lParam);
+    }
+}
+
+LRESULT CALLBACK Window::callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    UINT id = LOWORD(wParam);
     switch(uMsg)
 	{
         case WM_COMMAND:
@@ -18,27 +34,27 @@ LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 case START_BUTTON:
                 {
-                    demoWindow->isSelector = false;
+                    this->isSelector = false;
                     break;
                 }   
                 case MUTE_CHECKBOX:
                 {
-                    int checked = SendMessage(demoWindow->muteCheckboxHandle, BM_GETCHECK, 0, 0);
-                    SendMessage(demoWindow->muteCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
-                    EnableWindow(demoWindow->sfxBufferSizeLabelHandle, checked);
-                    EnableWindow(demoWindow->sfxBufferSizeDropdownHandle, checked);
-                    EnableWindow(demoWindow->sfxSampleRateLabelHandle, checked);
-                    EnableWindow(demoWindow->sfxSampleRateDropdownHandle, checked);
+                    int checked = SendMessage(this->muteCheckboxHandle, BM_GETCHECK, 0, 0);
+                    SendMessage(this->muteCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
+                    EnableWindow(this->sfxBufferSizeLabelHandle, checked);
+                    EnableWindow(this->sfxBufferSizeDropdownHandle, checked);
+                    EnableWindow(this->sfxSampleRateLabelHandle, checked);
+                    EnableWindow(this->sfxSampleRateDropdownHandle, checked);
                     break;
                 }
                 case RECORD_CHECKBOX:
                 {
-                    int checked = SendMessage(demoWindow->recordCheckboxHandle, BM_GETCHECK, 0, 0);
-                    SendMessage(demoWindow->recordCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
-                    EnableWindow(demoWindow->recordOutputDirectoryLabelHandle, !checked);
-                    EnableWindow(demoWindow->recordOutputDirectoryTextboxHandle, !checked);
-                    EnableWindow(demoWindow->recordOutputFramerateLabelHandle, !checked);
-                    EnableWindow(demoWindow->recordOutputFramerateDropdownHandle, !checked);
+                    int checked = SendMessage(this->recordCheckboxHandle, BM_GETCHECK, 0, 0);
+                    SendMessage(this->recordCheckboxHandle, BM_SETCHECK, checked?BST_UNCHECKED:BST_CHECKED, 0);
+                    EnableWindow(this->recordOutputDirectoryLabelHandle, !checked);
+                    EnableWindow(this->recordOutputDirectoryTextboxHandle, !checked);
+                    EnableWindow(this->recordOutputFramerateLabelHandle, !checked);
+                    EnableWindow(this->recordOutputFramerateDropdownHandle, !checked);
                     break;
                 }
             }
@@ -63,8 +79,6 @@ Window::Window(HINSTANCE _instance, const char* _title)
     , instance(_instance)
     , isSelector(true)
 {
-    demoWindow = this;
-    
     // Determine supported display device modes
     DEVMODE dm = { 0 };
     dm.dmSize = sizeof(dm);
@@ -113,7 +127,7 @@ Window::Window(HINSTANCE _instance, const char* _title)
     WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
 	wc.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW;
-	wc.lpfnWndProc = &callback;
+	wc.lpfnWndProc = &static_callback;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = this->instance;
@@ -126,8 +140,8 @@ Window::Window(HINSTANCE _instance, const char* _title)
 
 	RegisterClassEx(&wc);
     
-    handle = CreateWindowEx(0, title, title, WS_OVERLAPPEDWINDOW, 200, 200, 300, 360, NULL, NULL, instance, 0);
-    
+    handle = CreateWindowEx(0, title, title, WS_OVERLAPPEDWINDOW, 200, 200, 300, 360, NULL, NULL, instance, (LPVOID) this);
+
     // Add components to selector window
     resolutionLabelHandle = CreateWindow(WC_STATIC, "Resolution: ", WS_VISIBLE | WS_CHILD | SS_LEFT, 10, 12, 80, 15, handle, NULL, instance, NULL);
     

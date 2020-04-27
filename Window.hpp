@@ -21,6 +21,8 @@ class Window
 public:
     Window(HINSTANCE instance, const char *title = " :: Team210 - Go, make a demo :: ");
     ~Window();
+
+    LRESULT CALLBACK callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     
     // Window related
     const char *title;
@@ -61,5 +63,4 @@ public:
     int flipBuffers();
     void showDemo();
 };
-static Window *demoWindow = 0;
 #endif // MSVC
