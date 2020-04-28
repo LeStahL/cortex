@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-Program::Program()
+Program::Program(const char *_name)
     : nShaders(0)
     , shaders(nullptr)
     , uniformLocations(nullptr)
@@ -12,6 +12,8 @@ Program::Program()
     , isLinked(false)
 {
     handle = glCreateProgram();
+    name = (char *) malloc(strlen(_name) + 3);
+    sprintf(name, "%s", _name);
 }
 
 #ifdef DEBUG
@@ -48,7 +50,7 @@ void Program::link()
     if(hasLinkError())
     {
         isLinked = false;
-        printf("===== Program %d =====\n%s\n", handle, linkError());
+        printf("===== Program %s =====\n%s\n", name, linkError());
     } else
 #endif //DEBUG
     isLinked = true;

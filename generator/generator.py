@@ -167,7 +167,7 @@ for symbol in loadingBarSymbols:
     f.write("    Shader *" + symbol + "Shader = new Shader(" + symbol + "Source, \"" + symbol + "\");\n")
     f.write("    symbolTable->addSymbol(" + symbol + "Shader);\n")
 f.write("    symbolTable->compileContainedSymbols();\n")
-f.write("    ownProgram = new Program();\n")
+f.write("    ownProgram = new Program(\"Loading Bar\");\n")
 f.write("    ownProgram->attachShader(ownShader);\n")
 for symbol in loadingBarSymbols:
     f.write("    ownProgram->attachShader(" + symbol + "Shader);\n")

@@ -382,7 +382,7 @@ LoadingBar::LoadingBar(SymbolTable *_symbolTable)
     Shader *dlinesegmentShader = new Shader(dlinesegmentSource, "dlinesegment");
     symbolTable->addSymbol(dlinesegmentShader);
     symbolTable->compileContainedSymbols();
-    ownProgram = new Program();
+    ownProgram = new Program("Loading Bar");
     ownProgram->attachShader(ownShader);
     ownProgram->attachShader(randShader);
     ownProgram->attachShader(lfnoiseShader);

@@ -9,7 +9,7 @@
 class Program
 {
 public:
-    Program();
+    Program(const char *name);
     
     void attachShader(Shader *shader);
     void link();
@@ -24,6 +24,7 @@ public:
     int *uniformLocations;
     int nUniforms;
 
+    char *name;
     GLuint handle;
     Shader **shaders;
     int nShaders;
