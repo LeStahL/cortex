@@ -100,6 +100,9 @@ def compressSource(source):
     lineHasPreprocessorDirective = False
     
     while token != None:
+        if tokenIsPreprocessorDirective(token):
+            lineHasPreprocessorDirective = True
+            smallerSource += "\\n"
         if (not tokenIs(token, "SINGLELINE_COMMENT")) and (not tokenIs(token, "MULTILINE_COMMENT")):
             smallerSource += token.tokenData
             if tokenNeedsSpace(token):
@@ -108,8 +111,6 @@ def compressSource(source):
             if lineHasPreprocessorDirective:
                 smallerSource += "\\n"
             lineHasPreprocessorDirective = False
-        if tokenIsPreprocessorDirective(token):
-            lineHasPreprocessorDirective = True
         token = lexer.token()
     
     return smallerSource
@@ -161,6 +162,7 @@ f.write("LoadingBar::LoadingBar(SymbolTable *_symbolTable)\n")
 f.write("    : symbolTable(_symbolTable)\n")
 f.write("    , ownShader(new Shader(loadingBarSource))\n")
 f.write("{\n")
+f.write("    ownShader->compile();\n")
 for symbol in loadingBarSymbols:
     f.write("    Shader *" + symbol + "Shader = new Shader(" + symbol + "Source, \"" + symbol + "\");\n")
     f.write("    symbolTable->addSymbol(" + symbol + "Shader);\n")

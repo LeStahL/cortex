@@ -9,6 +9,7 @@ Program::Program()
     , uniformLocations(nullptr)
     , uniformNames(nullptr)
     , nUniforms(0)
+    , isLinked(false)
 {
     handle = glCreateProgram();
 }
@@ -18,7 +19,7 @@ bool Program::hasLinkError()
 {
     GLint linkStatus;
     glGetProgramiv(handle, GL_LINK_STATUS, &linkStatus);
-    return linkStatus == GL_TRUE;
+    return linkStatus != GL_TRUE;
 }
 
 char *Program::linkError()
@@ -43,6 +44,14 @@ void Program::attachShader(Shader* shader)
 void Program::link()
 {
     glLinkProgram(handle);
+#ifdef DEBUG
+    if(hasLinkError())
+    {
+        isLinked = false;
+        printf("===== Program %d =====\n%s\n", handle, linkError());
+    } else
+#endif
+    isLinked = true;
 }
 
 void Program::use()

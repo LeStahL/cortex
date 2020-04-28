@@ -12,7 +12,7 @@ public:
     void addSymbol(Shader *shader);
     void compileContainedSymbols();
     int nCompiledShaders();
-    
+
     Shader **shaders;
     int nShaders;
 };

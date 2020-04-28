@@ -1,7 +1,7 @@
 #include "LoadingBar.hpp"
 
 const char *loadingBarSource =
-"#version 130"
+"\n#version 130"
 "\n"
 "uniform vec2 iResolution;"
 "uniform float iProgress;"
@@ -63,10 +63,10 @@ const char *loadingBarSource =
 "add(sdf,vec2 (d,4.),sdf);"
 "}"
 ""
-"#define normal(o,t)void o(in vec3 x,out vec3 n,in float dx){vec2 s,na;t(x,s);t(x+dx*c.xyy,na);n.x=na.x;t(x+dx*c.yxy,na);n.y=na.x;t(x+dx*c.yyx,na);n.z=na.x;n=normalize(n-s.x);}"
+"\n#define normal(o,t)void o(in vec3 x,out vec3 n,in float dx){vec2 s,na;t(x,s);t(x+dx*c.xyy,na);n.x=na.x;t(x+dx*c.yxy,na);n.y=na.x;t(x+dx*c.yyx,na);n.z=na.x;n=normalize(n-s.x);}"
 "\nnormal(main_normal,main_scene)"
 ""
-"#define march(id,sid)void id(out vec3 x,in vec3 o,inout float d,in vec3 dir,in int N,out int i,out vec2 s){for(i=0;i<N;++i){x=o+d*dir;sid(x,s);if(s.x<1.e-4)return ;d+=min(s.x,1.e-2);}}"
+"\n#define march(id,sid)void id(out vec3 x,in vec3 o,inout float d,in vec3 dir,in int N,out int i,out vec2 s){for(i=0;i<N;++i){x=o+d*dir;sid(x,s);if(s.x<1.e-4)return ;d+=min(s.x,1.e-2);}}"
 "\nmarch(march_main,main_scene)"
 ""
 "float sm(in float d);"
@@ -237,7 +237,7 @@ const char *loadingBarSource =
 "}"
 ;
 const char *randSource =
-"#version 130"
+"\n#version 130"
 "\nvoid rand(in vec2 x,out float n)"
 "{"
 "x+=400.;"
@@ -245,7 +245,7 @@ const char *randSource =
 "}"
 ;
 const char *lfnoiseSource =
-"#version 130"
+"\n#version 130"
 "\nconst vec3 c=vec3 (1.,0.,-1.);"
 "void rand(in vec2 x,out float d);"
 "void lfnoise(in vec2 t,out float n)"
@@ -263,7 +263,7 @@ const char *lfnoiseSource =
 "}"
 ;
 const char *smoothminSource =
-"#version 130"
+"\n#version 130"
 "\n"
 "void smoothmin(in float a,in float b,in float k,out float dst)"
 "{"
@@ -272,7 +272,7 @@ const char *smoothminSource =
 "}"
 ;
 const char *dsmoothvoronoiSource =
-"#version 130"
+"\n#version 130"
 "\n"
 "uniform float iTime;"
 "uniform float iFader0;"
@@ -326,7 +326,7 @@ const char *dsmoothvoronoiSource =
 "}"
 ;
 const char *dbox3Source =
-"#version 130"
+"\n#version 130"
 "\nvoid dbox3(in vec3 x,in vec3 b,out float d)"
 "{"
 "vec3 da=abs(x)-b;"
@@ -348,7 +348,7 @@ const char *addSource =
 "}"
 ;
 const char *smSource =
-"#version 130"
+"\n#version 130"
 "\n"
 "uniform vec2 iResolution;"
 ""
@@ -362,6 +362,7 @@ LoadingBar::LoadingBar(SymbolTable *_symbolTable)
     : symbolTable(_symbolTable)
     , ownShader(new Shader(loadingBarSource))
 {
+    ownShader->compile();
     Shader *randShader = new Shader(randSource, "rand");
     symbolTable->addSymbol(randShader);
     Shader *lfnoiseShader = new Shader(lfnoiseSource, "lfnoise");

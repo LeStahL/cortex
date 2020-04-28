@@ -27,6 +27,7 @@ public:
     GLuint handle;
     Shader **shaders;
     int nShaders;
+    bool isLinked;
 #ifdef DEBUG
     bool hasLinkError();
     char *linkError();
