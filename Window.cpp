@@ -288,7 +288,22 @@ void Window::showSelector()
     configuration.muted = SendMessage(muteCheckboxHandle, BM_GETCHECK, 0, 0);
     configuration.record = SendMessage(recordCheckboxHandle, BM_GETCHECK, 0, 0);
     
-    GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);    
+    GetWindowText(recordOutputDirectoryTextboxHandle, configuration.recordDirname, 1024);
+
+    DestroyWindow(resolutionLabelHandle);
+    DestroyWindow(resolutionDropdownHandle);
+    DestroyWindow(muteCheckboxHandle);
+    DestroyWindow(sfxBufferSizeLabelHandle);
+    DestroyWindow(sfxBufferSizeDropdownHandle);
+    DestroyWindow(sfxSampleRateLabelHandle);
+    DestroyWindow(sfxSampleRateDropdownHandle);
+    DestroyWindow(recordCheckboxHandle);
+    DestroyWindow(recordOutputDirectoryLabelHandle);
+    DestroyWindow(recordOutputDirectoryTextboxHandle);
+    DestroyWindow(recordOutputFramerateLabelHandle);
+    DestroyWindow(recordOutputFramerateDropdownHandle);
+    DestroyWindow(startButtonHandle);
+    DestroyWindow(team210CreditLabel);
 }
 
 void Window::initializeOpengl()

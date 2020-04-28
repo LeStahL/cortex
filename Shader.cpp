@@ -46,6 +46,6 @@ void Shader::compile()
         isCompiled = false;
         printf("===== %s =====\n%s\n", symbol, compileError());
     } else
-#endif
+#endif // DEBUG
     isCompiled = true;
 }

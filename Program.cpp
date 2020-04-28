@@ -50,7 +50,7 @@ void Program::link()
         isLinked = false;
         printf("===== Program %d =====\n%s\n", handle, linkError());
     } else
-#endif
+#endif //DEBUG
     isLinked = true;
 }
 

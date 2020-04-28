@@ -9,7 +9,7 @@ SymbolTable::SymbolTable()
 {
 }
 
-bool SymbolTable::hasSymbol(const char* symbol)
+bool SymbolTable::hasSymbol(const char* symbol) const
 {
     for(int i=0; i<nShaders; ++i)
         if(!strcmp(symbol, shaders[i]->symbol)) return true;
@@ -41,4 +41,11 @@ int SymbolTable::nCompiledShaders()
     for(int i=0; i<nShaders; ++i)
         if(shaders[i]->isCompiled) ++nCompiledShaders;
     return nCompiledShaders;
+}
+
+Shader *SymbolTable::shaderBySymbolName(const char *symbol) const
+{
+    for(int i=0; i<nShaders; ++i)
+        if(!strcmp(symbol, shaders[i]->symbol)) return shaders[i];
+    return nullptr;
 }
