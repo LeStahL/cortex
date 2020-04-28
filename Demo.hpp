@@ -1,11 +1,17 @@
 #pragma once
 
+#include "Scene.hpp"
+#include "Window.hpp"
+#include "LoadingBar.hpp"
+
 class Demo
 {
-    Demo();
+    Demo(LoadingBar *loadingBar, Window *window);
 
     // Setup functions
-    // void addScene(Scene *scene);
+    void addScene(Scene *scene);
+    int nScenes;
+    Scene **scenes;
 
     // Control functions
     void play();

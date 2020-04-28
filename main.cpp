@@ -20,9 +20,8 @@ int WINAPI demo(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, in
 	win.initializeOpengl();
 
 	SymbolTable *symbolTable = new SymbolTable();
-	LoadingBar *loadingBar = new LoadingBar(symbolTable);
+	LoadingBar *loadingBar = new LoadingBar(symbolTable, &win);
 	// Demo *demo = new Demo(loadingBar);
-	win.showLoadingBar(loadingBar);
 
 	return 0;
 }

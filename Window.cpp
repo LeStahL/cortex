@@ -360,23 +360,18 @@ void Window::initializeOpengl()
     initializeOpenGLExtensions();
 }
 
-void Window::showLoadingBar(LoadingBar *_loadingBar)
+void Window::updateLoadingBar()
 {
-    loadingBar = _loadingBar;
+    glClearColor(1.,0.,0.,1.);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    // TODO: track loading bar status here
-    while(flipBuffers())
-    {
-    //     printf("draw()\n");
-    //     // Draw loading bar here until finished loading
-        glClearColor(1.,0.,0.,1.);
-        glClear(GL_COLOR_BUFFER_BIT);
+    loadingBar->ownProgram->use();
+    loadingBar->ownProgram->uniform2f("iResolution", configuration.screenWidth, configuration.screenHeight);
+    loadingBar->ownProgram->uniform1f("iProgress", .5);
+    
+    quad();
 
-        loadingBar->ownProgram->use();
-        loadingBar->ownProgram->uniform2f("iResolution", configuration.screenWidth, configuration.screenHeight);
-        loadingBar->ownProgram->uniform1f("iProgress", .5);
-        quad();
-    }
+    flipBuffers();
 }
 
 void Window::showDemo(Demo *_demo)

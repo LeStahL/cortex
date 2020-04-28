@@ -67,9 +67,9 @@ public:
     
     void initializeOpengl();
     void showSelector();
-    void showLoadingBar(LoadingBar *loadingBar);
     void showDemo(Demo *demo);
     int flipBuffers();
     void quad();
+    void updateLoadingBar();
 };
 #endif // MSVC
