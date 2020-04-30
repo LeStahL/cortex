@@ -36,6 +36,7 @@ set(${DEMO_IDENTIFIER}_SOURCES
     LoadingBar.cpp
     LoadingBar.gen.cpp
     Program.cpp
+    Texture.cpp
 )
 
 add_executable(${DEMO_IDENTIFIER} ${${DEMO_IDENTIFIER}_SOURCES})

@@ -360,8 +360,13 @@ const char *dlinesegmentSource =
 "}"
 ;
 
-LoadingBar::LoadingBar(SymbolTable *_symbolTable)
+LoadingBar::LoadingBar(SymbolTable *_symbolTable, Window *_window)
     : symbolTable(_symbolTable)
+    , window(_window)
+    , nShaderTasks(0)
+    , nProgramTasks(0)
+    , shaderTasks(nullptr)
+    , programTasks(nullptr)
     , ownShader(new Shader(loadingBarSource))
 {
     ownShader->compile();
@@ -396,4 +401,5 @@ LoadingBar::LoadingBar(SymbolTable *_symbolTable)
     ownProgram->use();
     ownProgram->handleUniform("iResolution");
     ownProgram->handleUniform("iProgress");
+    window.loadingBar = this;
 }

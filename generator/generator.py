@@ -180,7 +180,7 @@ f.write("    ownProgram->link();\n")
 f.write("    ownProgram->use();\n")
 f.write("    ownProgram->handleUniform(\"iResolution\");\n")
 f.write("    ownProgram->handleUniform(\"iProgress\");\n")
-f.write("    window.loadingBar = this;\n")
+f.write("    window->loadingBar = this;\n")
 f.write("}\n")
 f.close()
 
